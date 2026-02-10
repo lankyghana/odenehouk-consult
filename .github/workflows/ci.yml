@@ -1,0 +1,39 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps
+        working-directory: backend
+        run: npm install
+
+      - name: Run backend migrations (dry-run)
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://user:pass@localhost:5432/db' }}
+        run: npx node-pg-migrate status || true
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build --if-present
+
+      - name: npm audit
+        working-directory: backend
+        run: npm audit --audit-level=moderate || true
+
+      - name: Run simple lint
+        run: echo "No lint configured" || true
