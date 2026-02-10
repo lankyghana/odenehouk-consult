@@ -1,0 +1,10 @@
+{
+  "name": "odenehouk-backend-migrations",
+  "scripts": {
+    "migrate": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down"
+  },
+  "devDependencies": {
+    "node-pg-migrate": "^6.2.3"
+  }
+}
